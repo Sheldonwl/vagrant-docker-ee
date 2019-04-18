@@ -11,7 +11,7 @@ yum remove docker docker-client \
 
 rm /etc/yum.repos.d/docker*.repo 
 
-export DOCKERURL="https://storebits.docker.com/ee/trial/sub-7b258b77-2d6f-48df-ac74-b7894dd4a1fd"
+export DOCKERURL=$(cat /vagrant/secrets/ee_url)
 
 sudo -E sh -c 'echo "$DOCKERURL/centos" > /etc/yum/vars/dockerurl'
 
@@ -21,47 +21,38 @@ sudo -E yum-config-manager \
 --add-repo \
 "$DOCKERURL/centos/docker-ee.repo"
 
-#   Enable docker 18.09 repo
+# Enable docker 18.09 repo
 sudo yum-config-manager --disable docker-ee-stable-17.06
 sudo yum-config-manager --enable docker-ee-stable-18.09
 
+# Install docker ee
 sudo yum -y install docker-ee
-
 sudo systemctl start docker
-
 sudo systemctl enable docker
-
 sudo docker run hello-world
-
 sudo usermod -aG docker vagrant
 
-# curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-# chmod +x ./kubectl
-# sudo mv ./kubectl /usr/local/bin/kubectl
+# Set DNS entries
+sudo echo "192.168.33.11 ucp-1.local" >> /etc/hosts
+# sudo echo "192.168.33.12 ucp-2.local" >> /etc/hosts
+# sudo echo "192.168.33.13 ucp-3.local" >> /etc/hosts
+sudo echo "192.168.33.101 node-1.local" >> /etc/hosts
+sudo echo "192.168.33.102 node-2.local" >> /etc/hosts
+# sudo echo "192.168.33.103 node-3.local" >> /etc/hosts
+sudo echo "192.168.33.111 dtr-1.local" >> /etc/hosts
+# sudo echo "192.168.33.112 dtr-2.local" >> /etc/hosts
+# sudo echo "192.168.33.113 dtr-3.local" >> /etc/hosts
 
-# #OR run as SUDO
-# cat <<EOF > /etc/yum.repos.d/kubernetes.repo
-# [kubernetes]
-# name=Kubernetes
-# baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-# enabled=1
-# gpgcheck=1
-# repo_gpgcheck=1
-# gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-# EOF
-# sudo yum install -y kubectl
-
-
-
-# sudo docker image pull docker/ucp
-
-# docker container run --rm -it --name ucp \
-# -v /var/run/docker.sock:/var/run/docker.sock \
-# docker/ucp:latest install \
-# --host-address 192.168.33.11 \
-# --admin-username docker-admin \
-# --admin-password Welcome01 \
-# --pod-cidr 192.169.0.0/16 \
-# --san dev.ucp.nl \
-#  --force-minimums
-
+if [ "$HOSTNAME" = "ucp-1" ]; then
+    sudo cp /vagrant/scripts/install-ucp.sh .
+    sudo chmod +x install-ucp.sh
+    ./install-ucp.sh
+elif [ "$HOSTNAME" = "node-1" -o "$HOSTNAME" = "node-2" ]; then
+    sudo cp /vagrant/scripts/install-node.sh .
+    sudo chmod +x install-node.sh
+    ./install-node.sh
+elif [ "$HOSTNAME" = "dtr-1" ]; then
+    sudo cp /vagrant/scripts/install-dtr.sh .
+    sudo chmod +x install-dtr.sh
+    ./install-dtr.sh
+fi

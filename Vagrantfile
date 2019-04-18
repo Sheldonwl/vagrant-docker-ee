@@ -1,57 +1,53 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# https://storebits.docker.com/ee/trial/sub-9dbd565a-6f1e-457a-95b4-3ff3136943df
-
 Vagrant.configure("2") do |config|
-  # config.vm.network "public_network"
-  
-  #WORKING Master
-  config.vm.define "ucpMaster" do |workerdtr| 
-    workerdtr.vm.box = "centos/7"
-    workerdtr.vm.hostname = "ucp-master"
-    workerdtr.vm.box_check_update = false
-    config.vm.network "private_network", ip: "192.168.33.11"
-    #workerdtr.vm.network "forwarded_port", guest: 80, host: 8880, host_ip: "127.0.0.1"
-    workerdtr.vm.provision "shell", path: "scripts/ucp-master-install.sh"
-    workerdtr.vm.provider "virtualbox" do |vb|
-        # Display the VirtualBox GUI when booting the machine
-        vb.gui = false
-        vb.name = "ucpMaster"
-        vb.memory = "6144"
-        vb.cpus = 1
-      end
+
+  (1..1).each do |i|
+    config.vm.define "ucp-#{i}" do |ucp| 
+      ucp.vm.box = "centos/7"
+      ucp.vm.hostname = "ucp-#{i}"
+      ucp.vm.box_check_update = false
+      ucp.vm.network "private_network", ip: "192.168.33.1#{i}"
+      ucp.vm.provision "shell", path: "scripts/docker-ee-install.sh"
+      ucp.vm.provider "virtualbox" do |vb|
+          vb.gui = false
+          vb.name = "ucp-#{i}"
+          vb.memory = "4096"
+          vb.cpus = 1
+        end
+    end
   end
 
-  #WORKING Worker1
-  config.vm.define "ucpWorker1" do |workerdtr| 
-    workerdtr.vm.box = "centos/7"
-    workerdtr.vm.hostname = "ucp-worker1"
-    workerdtr.vm.box_check_update = false
-    config.vm.network "private_network", ip: "192.168.33.12"
-    #workerdtr.vm.network "forwarded_port", guest: 80, host: 8880, host_ip: "127.0.0.1"
-    workerdtr.vm.provision "shell", path: "scripts/docker-ee-install.sh"
-    workerdtr.vm.provider "virtualbox" do |vb|
-        # Display the VirtualBox GUI when booting the machine
-        vb.gui = false
-        vb.name = "ucpWorker1"
-        vb.memory = "2048"
-        vb.cpus = 1
-      end
+  (1..2).each do |i|
+    config.vm.define "node-#{i}" do |node| 
+      node.vm.box = "centos/7"
+      node.vm.hostname = "node-#{i}"
+      node.vm.box_check_update = false
+      node.vm.network "private_network", ip: "192.168.33.10#{i}"
+      node.vm.provision "shell", path: "scripts/docker-ee-install.sh"
+      node.vm.provider "virtualbox" do |vb|
+          vb.gui = false
+          vb.name = "node-#{i}"
+          vb.memory = "2048"
+          vb.cpus = 1
+        end
+    end
   end
 
-  config.vm.define "workerWithDTR" do |workerWithDTR| 
-    workerWithDTR.vm.box = "centos/7"
-    workerWithDTR.vm.hostname = "worker-with-dtr"
-    workerWithDTR.vm.box_check_update = false
-    workerWithDTR.vm.network "private_network", ip: "192.168.33.13"
-    workerWithDTR.vm.provision "shell", path: "scripts/worker-with-dtr-install.sh"
-    workerWithDTR.vm.provider "virtualbox" do |vb|
-        # Display the VirtualBox GUI when booting the machine
-        vb.gui = false
-        vb.name = "workerWithDTR"
-        vb.memory = "2048"
-        vb.cpus = 1
-      end
+  (1..1).each do |i|
+    config.vm.define "dtr-#{i}" do |dtr| 
+      dtr.vm.box = "centos/7"
+      dtr.vm.hostname = "dtr-#{i}"
+      dtr.vm.box_check_update = false
+      dtr.vm.network "private_network", ip: "192.168.33.11#{i}"
+      dtr.vm.provision "shell", path: "scripts/docker-ee-install.sh"
+      dtr.vm.provider "virtualbox" do |vb|
+          vb.gui = false
+          vb.name = "dtr-#{i}"
+          vb.memory = "2048"
+          vb.cpus = 1
+        end
+    end
   end
 end

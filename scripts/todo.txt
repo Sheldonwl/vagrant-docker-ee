@@ -1,0 +1,39 @@
+# curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+# chmod +x ./kubectl
+# sudo mv ./kubectl /usr/local/bin/kubectl
+
+# #OR run as SUDO
+# cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+# [kubernetes]
+# name=Kubernetes
+# baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+# enabled=1
+# gpgcheck=1
+# repo_gpgcheck=1
+# gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+# EOF
+# sudo yum install -y kubectl
+
+
+
+# sudo docker image pull docker/ucp
+
+# docker container run --rm -it --name ucp \
+# -v /var/run/docker.sock:/var/run/docker.sock \
+# docker/ucp:latest install \
+# --host-address 192.168.33.11 \
+# --admin-username docker-admin \
+# --admin-password Welcome01 \
+# --pod-cidr 192.169.0.0/16 \
+# --san dev.ucp.nl \
+#  --force-minimums
+
+# Pull the latest version of DTR
+# docker pull docker/dtr:latest
+
+# Join swarm
+
+#Go to UCP for the dtr settings. e.g:
+# docker run -it --rm docker/dtr install --ucp-node ucp-master --ucp-username docker-admin --ucp-insecure-tls --ucp-password Welcome01 --ucp-url https://192.168.33.11
+
+# docker run -it --rm docker/dtr install --ucp-node worker-with-dtr --ucp-username docker-admin --ucp-url https://192.168.33.11 --ucp-insecure-tls --ucp-password Welcome01
