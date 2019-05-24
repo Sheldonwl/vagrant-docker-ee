@@ -56,3 +56,6 @@ elif [ "$HOSTNAME" = "dtr-1" ]; then
     sudo chmod +x install-dtr.sh
     ./install-dtr.sh
 fi
+
+echo "alias k=\"kubectl\"" >> ~/.bashrc
+echo "alias kk=\"kubectl -n kube-system\"" >> ~/.bashrc
