@@ -32,6 +32,8 @@ sudo systemctl enable docker
 sudo docker run hello-world
 sudo usermod -aG docker vagrant
 
+# TODO: Better dns implementation
+#-------------------------------------------------------------
 # Set DNS entries
 sudo echo "192.168.33.11 ucp-1.local" >> /etc/hosts
 # sudo echo "192.168.33.12 ucp-2.local" >> /etc/hosts
@@ -56,6 +58,7 @@ elif [ "$HOSTNAME" = "dtr-1" ]; then
     sudo chmod +x install-dtr.sh
     ./install-dtr.sh
 fi
+#-------------------------------------------------------------
 
 echo "alias k=\"kubectl\"" >> ~/.bashrc
 echo "alias kk=\"kubectl -n kube-system\"" >> ~/.bashrc
